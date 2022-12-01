@@ -1,5 +1,6 @@
 # Cosmic Ray Detector
 ## What does this code do
+![image](https://i.imgur.com/S4QiYAV.gif)
 This code detects cosmic bitflips in RAM. It allows the user to enter a percentage of the free RAM to allocate, then it allocates that much RAM and sets it to 0. It then iterates through the memory, checking each byte for a value of 1. If it finds one, it prints out the location of the flipped bit and sets it back to 0.
 
 ## What is a cosmic bit flip?
