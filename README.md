@@ -19,8 +19,8 @@ This project aim at detecting such cosmic events by scanning a zeroed memory ran
 Clone this repository and navigate to the directory.
 
 ```bash
-git clone https://github.com/mohamedayman/cosmic_bitflip.git
-cd cosmic_bitflip
+git clone https://github.com/jocarol/cosmicRayDetector
+cd cosmicRayDetector
 ```
 
 To compile the code, run the following command:
