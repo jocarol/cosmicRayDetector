@@ -30,6 +30,7 @@ char *timestamp()
 long long int detect_ram()
 {
   long long int ram = 0;
+  char line[256];
 
   FILE *fp = fopen("/proc/meminfo", "r");
   if (fp == NULL)
@@ -37,7 +38,6 @@ long long int detect_ram()
     printf("Error opening file");
     return 1;
   }
-  char line[256];
   while (fgets(line, sizeof(line), fp))
   {
     if (strncmp(line, "MemTotal:", 9) == 0)
