@@ -27,9 +27,9 @@ char *timestamp()
   return res;
 }
 
-long long int detect_ram()
+long int detect_ram()
 {
-  long long int ram = 0;
+  long int ram = 0;
   char line[256];
 
   FILE *fp = fopen("/proc/meminfo", "r");
@@ -54,17 +54,20 @@ long long int detect_ram()
 int main()
 {
   short int percent = 0;
-
   while (percent < 1 || percent > 90)
   {
     ask_user(&percent);
   }
   clearTerminal();
-  long long int ram = detect_ram();
-  long long int bytes = (percent * ram) / 100;
-
+  long int ram = detect_ram();
+  
+  long int bytes = (percent * ram) / 100;
+  if (!bytes)
+  {
+    printf("Error: Can't detect RAM. Allocating 1GB.\n");
+    bytes = 1073741824;
+  }
   unsigned int tests = 0;
-
   char *ascii = " ______                      __           ______                  _____        __              __              \r\n|      .-----.-----.--------|__.----.    |   __ .---.-.--.--.    |     \\.-----|  |_.-----.----|  |_.-----.----.\r\n|   ---|  _  |__ --|        |  |  __|    |      |  _  |  |  |    |  --  |  -__|   _|  -__|  __|   _|  _  |   _|\r\n|______|_____|_____|__|__|__|__|____|    |___|__|___._|___  |    |_____/|_____|____|_____|____|____|_____|__|  \r\n                                                      |_____|                                                  ";
   printf("%s \r \n", ascii);
   printf("Allocating %lld bytes of memory (%d%% of the free memory)\n", bytes, percent);
@@ -79,6 +82,7 @@ int main()
   mlock(buffer, bytes);
   memset(buffer, 0, bytes);
   printf("\nScan started at %s.\n", timestamp());
+  printf("----------------------------------------\n");
   while (1)
   {
     for (size_t i = 0; i < bytes; ++i)
@@ -88,7 +92,9 @@ int main()
       if (buffer[i])
       {
         char *stamp = timestamp();
+
         printf("\r ✨ %s | Bitflip detected at %p\n\n", stamp, &buffer[i]);
+        buffer[i] = 0;
       }
     }
   }
