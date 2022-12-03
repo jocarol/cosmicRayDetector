@@ -13,7 +13,7 @@ Cosmic bitflips are relatively rare, but can still be problematic due to the fac
 
 To prevent cosmic bitflips, RAM manufacturers use error-correcting codes (ECCs) to detect and correct errors. ECCs use redundant data that is written along with the original data, and are used to detect and correct any errors when the data is read back from the RAM. If a bitflip is detected, the ECC can correct it, thus preventing data corruption.
 
-This project aim at detecting such cosmic events by scanning a zeroed memory range for 1s at low level. This is why this project is written in C.
+This project aims at detecting such cosmic events by scanning a zeroed memory range for 1s at low level. This is why this project is written in C.
 
 ## How to compile
 Clone this repository and navigate to the directory.
