@@ -51,6 +51,35 @@ long int detect_ram()
   return ram * 1024;
 }
 
+// Function to divide memory into chunks and scan each chunk separately
+void divide_and_conquer(long int bytes, unsigned int tests, unsigned char *buffer)
+{
+  int chunk_size = bytes / tests; // Calculate the size of each chunk
+  printf("Bytes: %ld, Tests: %d,  Buffer: %p ", bytes, tests, buffer);
+  for (int i = 0; i < tests; i++)
+  {
+    unsigned char *chunk_start = buffer + (i * chunk_size); // Get the start of the chunk
+    unsigned char *chunk_end = chunk_start + chunk_size;    // Get the end of the chunk
+
+    // Scan the chunk
+    for (unsigned char *ptr = chunk_start; ptr < chunk_end; ptr++)
+    {
+      // Print the progress of the scan in percent with the value of the current pointer, the current chunk and the total number of chunks
+      printf("\rScanning: %d%%, Chunk: %d/%d, Pointer: %p", (int)((ptr - chunk_start) * 100 / chunk_size), i + 1, tests, ptr);
+
+      fflush(stdout);
+
+      if (*ptr)
+      {
+        char *stamp = timestamp();
+
+        printf("\r ✨ %s | Bitflip detected at %p\n\n", stamp, &buffer[i]);
+        *ptr = 0;
+      }
+    }
+  }
+}
+
 int main()
 {
   short int percent = 0;
@@ -60,7 +89,7 @@ int main()
   }
   clearTerminal();
   long int ram = detect_ram();
-  
+
   long int bytes = (percent * ram) / 100;
   if (!bytes)
   {
@@ -68,6 +97,61 @@ int main()
     bytes = 1073741824;
   }
   unsigned int tests = 0;
+  // Calculate the number of tests to perform
+
+  if (bytes < 1073741824)
+  {
+    tests = 1;
+  }
+  else if (bytes < 2147483648)
+  {
+    tests = 2;
+  }
+  else if (bytes < 4294967296)
+  {
+    tests = 4;
+  }
+  else if (bytes < 8589934592)
+  {
+    tests = 8;
+  }
+  else if (bytes < 17179869184)
+  {
+    tests = 16;
+  }
+  else if (bytes < 34359738368)
+  {
+    tests = 32;
+  }
+  else if (bytes < 68719476736)
+  {
+    tests = 64;
+  }
+  else if (bytes < 137438953472)
+  {
+    tests = 128;
+  }
+  else if (bytes < 274877906944)
+  {
+    tests = 256;
+  }
+  else if (bytes < 549755813888)
+  {
+    tests = 512;
+  }
+  else if (bytes < 1099511627776)
+  {
+    tests = 1024;
+  }
+  else if (bytes < 2199023255552)
+  {
+    tests = 2048;
+  }
+  else if (bytes < 4398046511104)
+  {
+    tests = 4096;
+  }
+
   char *ascii = " ______                      __           ______                  _____        __              __              \r\n|      .-----.-----.--------|__.----.    |   __ .---.-.--.--.    |     \\.-----|  |_.-----.----|  |_.-----.----.\r\n|   ---|  _  |__ --|        |  |  __|    |      |  _  |  |  |    |  --  |  -__|   _|  -__|  __|   _|  _  |   _|\r\n|______|_____|_____|__|__|__|__|____|    |___|__|___._|___  |    |_____/|_____|____|_____|____|____|_____|__|  \r\n                                                      |_____|                                                  ";
   printf("%s \r \n", ascii);
   printf("Allocating %lld bytes of memory (%d%% of the free memory)\n", bytes, percent);
@@ -85,18 +169,6 @@ int main()
   printf("----------------------------------------\n");
   while (1)
   {
-    for (size_t i = 0; i < bytes; ++i)
-    {
-      printf("Current byte inspected: %p \033[?25l \r", &buffer[i]);
-      fflush(stdout);
-      if (buffer[i])
-      {
-        char *stamp = timestamp();
-
-        printf("\r ✨ %s | Bitflip detected at %p\n\n", stamp, &buffer[i]);
-        buffer[i] = 0;
-      }
-    }
+    divide_and_conquer(bytes, tests, buffer);
   }
 }
-
